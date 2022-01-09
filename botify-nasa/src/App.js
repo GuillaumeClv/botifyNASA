@@ -3,8 +3,11 @@ import './style/App.css';
 import dataJson from './data.json'
 import { Chart } from "react-google-charts";
 
+import Dropdown from './Dropdown';
+
 function App() {
   const [data, setData] = useState([])
+  const [bodyDisplayed, setBodyDisplayed] = useState("")
 
   // Bar chart options
   const options = {
@@ -24,25 +27,51 @@ function App() {
     setData(dataJson.near_earth_objects)
   }, [setData])
 
+  // Get data for default chart
   const dataChart = [...data.map(({name, estimated_diameter}) => [
     name,
     estimated_diameter.kilometers.estimated_diameter_min, 
     estimated_diameter.kilometers.estimated_diameter_max]
   )]
 
-  // console.log(data.map(item => {
-  //   console.log(item)
-  // }))
+  // Data from body checked in Dropdown
+  const singleChart = [...data.filter((item) => item.name === bodyDisplayed)]
+
+  // Get names of orbiting bodys
+  const orbitingBodys = [...data.map(({name}) => name)]
 
   return (
     <>
-      <Chart
-        chartType="BarChart"
-        width="100%"
-        height="400px"
-        options={options}
-        data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], ...dataChart]}
+      <Dropdown
+        orbitingBodys={orbitingBodys}
+        setBodyDisplayed={setBodyDisplayed}
       />
+      <p>bodyDisplayed : {bodyDisplayed}</p>
+      {
+        bodyDisplayed === ""
+        ? 
+        <Chart
+          chartType="BarChart"
+          width="100%"
+          height="400px"
+          options={options}
+          data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], ...dataChart]}
+        />
+        :
+        <Chart
+          chartType="BarChart"
+          width="100%"
+          height="400px"
+          options={options}
+          data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], 
+            [
+              singleChart[0].name, 
+              singleChart[0].estimated_diameter.kilometers.estimated_diameter_min, 
+              singleChart[0].estimated_diameter.kilometers.estimated_diameter_max
+            ]
+          ]}
+        />
+      }
     </>
   )
 }
