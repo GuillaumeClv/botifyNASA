@@ -34,7 +34,7 @@ function App() {
     estimated_diameter.kilometers.estimated_diameter_max]
   )]
 
-  // Data from body checked in Dropdown
+  // Data from body checked in Dropdown only for oldest date time
   let singleChart = [...data.filter((item) => item.close_approach_data[0].orbiting_body === bodyDisplayed)]
   singleChart = [...singleChart.map((item) => (
     [
@@ -44,7 +44,6 @@ function App() {
     ]
   ))]
 
-  // Get names of orbiting bodys
   const orbitingBodys = ["Earth", "Juptr", "Mars", "Merc"]
 
   return (
