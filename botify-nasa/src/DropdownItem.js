@@ -11,10 +11,16 @@ const DropdownItem = ({body, setBodyDisplayed}) => {
     return (
         <li key={body}>
             <input
+                id={body}
+                name={body}
                 type="checkbox"
                 onChange={onChange}
             ></input>
-            <p>{body}</p>
+            <label
+                htmlFor={body}
+            >
+                {body}
+            </label>
         </li>
     )
 }

@@ -35,15 +35,23 @@ function App() {
   )]
 
   // Data from body checked in Dropdown
-  const singleChart = [...data.filter((item) => item.name === bodyDisplayed)]
+  let singleChart = [...data.filter((item) => item.close_approach_data[0].orbiting_body === bodyDisplayed)]
+  singleChart = [...singleChart.map((item) => (
+    [
+      item.name,
+      item.estimated_diameter.kilometers.estimated_diameter_min,
+      item.estimated_diameter.kilometers.estimated_diameter_max
+    ]
+  ))]
 
   // Get names of orbiting bodys
-  const orbitingBodys = [...data.map(({name}) => name)]
+  const orbitingBodys = ["Earth", "Juptr", "Mars", "Merc"]
 
   return (
     <>
       <Dropdown
         orbitingBodys={orbitingBodys}
+        bodyDisplayed={bodyDisplayed}
         setBodyDisplayed={setBodyDisplayed}
       />
       <p>bodyDisplayed : {bodyDisplayed}</p>
@@ -63,13 +71,7 @@ function App() {
           width="100%"
           height="400px"
           options={options}
-          data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], 
-            [
-              singleChart[0].name, 
-              singleChart[0].estimated_diameter.kilometers.estimated_diameter_min, 
-              singleChart[0].estimated_diameter.kilometers.estimated_diameter_max
-            ]
-          ]}
+          data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], ...singleChart]}
         />
       }
     </>
