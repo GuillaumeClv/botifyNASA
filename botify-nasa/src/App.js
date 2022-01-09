@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import './style/App.css';
-import dataJson from './data.json'
 import { Chart } from "react-google-charts";
 
+import './style/App.css';
+import dataJson from './data.json'
+
 import Dropdown from './Dropdown';
+import Table from './Table';
 
 function App() {
   const [data, setData] = useState([])
   const [bodyDisplayed, setBodyDisplayed] = useState("")
+  const [switchButton, setSwitchButton] = useState(true)
+  const orbitingBodys = ["Earth", "Juptr", "Mars", "Merc"]
+
+  // Get data from API
+  useEffect(() => {
+    // Theoretically fetch("https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY")
+    setData(dataJson.near_earth_objects)
+  }, [setData])
+
+  // Switch between chart and table vue
+  const switchView = () => setSwitchButton(!switchButton)
 
   // Bar chart options
   const options = {
@@ -20,12 +33,6 @@ function App() {
       minValue: 0,
     },
   }
-
-  // Get data from API
-  useEffect(() => {
-    // Theoretically fetch("https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY")
-    setData(dataJson.near_earth_objects)
-  }, [setData])
 
   // Get data for default chart
   const dataChart = [...data.map(({name, estimated_diameter}) => [
@@ -44,8 +51,6 @@ function App() {
     ]
   ))]
 
-  const orbitingBodys = ["Earth", "Juptr", "Mars", "Merc"]
-
   return (
     <>
       <Dropdown
@@ -53,25 +58,29 @@ function App() {
         bodyDisplayed={bodyDisplayed}
         setBodyDisplayed={setBodyDisplayed}
       />
-      <p>bodyDisplayed : {bodyDisplayed}</p>
+
+      <button onClick={switchView}>Changer de vue</button>
+
       {
-        bodyDisplayed === ""
-        ? 
-        <Chart
+        switchButton && bodyDisplayed === "" && <Chart
           chartType="BarChart"
           width="100%"
           height="400px"
           options={options}
           data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], ...dataChart]}
         />
-        :
-        <Chart
+      }
+      {
+        switchButton && bodyDisplayed !== "" && <Chart
           chartType="BarChart"
           width="100%"
           height="400px"
           options={options}
           data={[["NEO", "Min Estimated Diameter (km)", "Max Estimeted Diameter"], ...singleChart]}
         />
+      }
+      {
+        !switchButton && <Table data={dataChart}/>
       }
     </>
   )
