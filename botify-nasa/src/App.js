@@ -15,8 +15,11 @@ function App() {
 
   // Get data from API
   useEffect(() => {
-    // Theoretically fetch("https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY")
-    setData(dataJson.near_earth_objects)
+    (async () => {
+      const api = await fetch("https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY")
+      const res =  await api.json()
+      setData(res.near_earth_objects)
+    })() 
   }, [setData])
 
   // Switch between chart and table vue
